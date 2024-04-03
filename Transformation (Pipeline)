@@ -1,0 +1,80 @@
+# Import Pandas Data Frame Packages and Read Data File Directorate
+
+import pandas as pd
+df = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Test Data.csv")
+import os
+import glob
+os.chdir("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation")
+
+
+# Create necessary Data Frame Columns, calculate ETotal and $Total columns and Populate Criteria with "N"
+# Read CSV file to directorate as an intermediary file prepared for final integration
+
+df["Criteria"] = "N"
+df["Value"] = ""
+df["ETotal"] = df["E2025"] + df["E2026"] + df["E2027"] + df["E2028"] + df["E2029"]
+df["$Total"] = df["$2025"] + df["$2026"] + df["$2027"] + df["$2028"] + df["$2029"]
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv", index=False)
+
+
+# Script creating necessary PowerBI duplicates for integration into final PowerBI CSV File
+
+E2025 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = 'E2025'
+df['Value'] = df['E2025']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 2.csv", index=False)
+E2026 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = 'E2026'
+df['Value'] = df['E2026']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 3.csv", index=False)
+E2027 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = 'E2027'
+df['Value'] = df['E2027']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 4.csv", index=False)
+E2028 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = 'E2028'
+df['Value'] = df['E2028']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 5.csv", index=False)
+E2029 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = 'E2029'
+df['Value'] = df['E2029']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 6.csv", index=False)
+D2025 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = '$2025'
+df['Value'] = df['$2025']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 7.csv", index=False)
+D2026 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = '$2026'
+df['Value'] = df['$2026']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 8.csv", index=False)
+D2027 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = '$2027'
+df['Value'] = df['$2027']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 9.csv", index=False)
+D2028 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = '$2028'
+df['Value'] = df['$2028']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 10.csv", index=False)
+D2029 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data.csv")
+df['Criteria'] = '$2029'
+df['Value'] = df['$2029']
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Intermediary Data 11.csv", index=False)
+
+
+# Combination of All CSV Files into one master file
+
+extension = 'csv'
+all_filenames = [i for i in glob.glob('*.{}'.format(extension))]
+combined_csv = pd.concat([pd.read_csv(f) for f in all_filenames ])
+combined_csv.to_csv("CombinedPBISCSV.csv", index=False, encoding='utf-8-sig')
+
+
+# Effectively map Geolocation (Geographic Location, Longitude, Latitude) from Geotag Dictionary into PBIS Master File and finalize file 
+
+df1 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\CombinedPBISCSV.csv")
+df2 = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\Geotag Location.csv")
+df2 = df2.set_index('AUIC')
+df1['Location Tag'] = df1['UIC'].map(df2['Location Tag'])
+df1['Longitude'] = df1['UIC'].map(df2['Longitude'])
+df1['Latitude'] = df1['UIC'].map(df2['Latitude'])
+df1.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\Final Data.csv", index=False)
