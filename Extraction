@@ -1,0 +1,54 @@
+# Import SparkSession and all Spark Packages (SparkSQL, StreamingContext, etc)
+
+import findspark
+findspark.init()
+
+import pyspark
+from pyspark.sql import SparkSession, Row
+from pyspark import SparkContext
+from pyspark.sql import functions as func
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType, LongType
+from pyspark.streaming import StreamingContext
+from pyspark.sql.functions import regexp_extract
+import codecs
+import pandas as pd
+
+
+df = spark.sql('''select 'spark' as hello ''')
+df.show()
+
+
+# Run Spark Session 
+
+spark = SparkSession.builder().master("local[*]")
+    .appName("PBIS Extraction Master")
+    .getOrCreate()
+      import spark.implicits._
+
+
+# Write to SQL Table
+  sampleDF.write
+  .format("com.microsoft.sqlserver.jdbc.spark")
+  .mode("overwrite")
+  .option("url", "jdbc:sqlserver://{SERVER_ADDR};databaseName=emp;")
+  .option("dbtable", "employee")
+  .option("user", "Frahmand0011")
+  .option("password", "Xylophones456-")
+  .save()
+
+
+# Read from SQL Table
+  df = spark.read
+  .format("com.microsoft.sqlserver.jdbc.spark")
+  .option("url", "jdbc:sqlserver://{SERVER_ADDR};databaseName=emp;")
+  .option("dbtable", "employee")
+  .option("user", "Frahmand0011")
+  .option("password", "Xylophones456-").load()
+
+# SparkSQL Query extracting preliminary data into Spark Data Frame 
+spark.sql("SELECT APPN, IS, IS_LABEL, ED, SP, ADD, STATUS, OE, LI, LI_LABEL, DS, DS_LABEL, PE, PE_LABEL, UIC, UIC_LABEL, $2025, $2026, $2027, $2028, $2029, E2025, E2026, E2027, E2028, E2029 FROM PBIS.Database WHERE APPN = RPN, OMNR AND ADD = A AND STATUS = L") \
+     .show(5)
+
+# Export data into file directorate prepared for data transformation
+
+df.to_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\PBIS Test Data.csv", index=False)
