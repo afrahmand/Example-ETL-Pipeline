@@ -1,0 +1,25 @@
+# Import Master CSV File and Pandas for Unit Testing
+
+PBIS_MasterFile_Location = "C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\Final Data.csv"
+import pandas as pd
+
+
+# Unit Testing verifies no errors exist within your Master CSV File
+
+df = pd.read_csv(PBIS_MasterFile_Location)
+UnitTest1 = df['Longitude'].isna().sum()
+UnitTest1 = df['Longitude'].isnull().sum()
+
+UnitTest2 = df['Latitude'].isna().sum()
+UnitTest2 = df['Latitude'].isnull().sum()
+
+UnitTest3 = df['Location Tag'].isna().sum()
+UnitTest3 = df['Location Tag'].isnull().sum()
+
+
+# If Statement reads CSV File into PowerBI if no errors exist, but returns ERROR message and prompts to fix corrupted Master File if any issues exist
+
+if (UnitTest1 == 0) and (UnitTest2 == 0) and (UnitTest3 == 0):
+    df = pd.read_csv("C:\\Users\\ahmad\\OneDrive\\Documents\\PBIS Python Transformation\\Final Data.csv")
+else:
+    print("ERROR: Master CSV File Corrupted")
