@@ -1,0 +1,38 @@
+import pandas as pd
+import re
+
+df1 = pd.read_csv('ground_vehicles.csv')
+
+# Capitalize first letter of each word to begin data normalization
+df1['Vendor  Top Name'] = df1['Vendor  Top Name'].str.title()
+
+# Vendor name normalization / data cleansing algorithm, which gets rid of all variations of vendor names
+df1['Vendor  Top Name'] = df1['Vendor  Top Name'].str.replace('Corp.' and 'Corp', 'Corporation', regex = 'True')\
+                                              .str.replace(', Llc' and ', L.L.C.' and "L.L.C.", ' LLC', regex = 'True')\
+                                              .str.replace(', Inc.' and ', Inc' and 'Inc.' and 'Inc', ' Incorporated', regex = 'True')\
+                                              .str.replace('Ltd.' and 'Ltd', '', regex = 'True')\
+                                              .str.replace('orporatedorporated', 'orporated', regex = 'True')\
+                                              .str.replace('orporationoration', 'orporation', regex = 'True')\
+                                              .str.replace('Incorporated.', 'Incorporated', regex = 'True')\
+                                              .str.replace("Llc", "LLC", regex = 'True')
+
+
+
+# Contract value master reference ensures that all Contract Values are properly mapped and included
+df2 = pd.read_csv("Contract_Number_Reference.csv")
+df2 = df2.set_index('ID')
+df1['Contract Number (IDVPIID)'] = df1['ID'].map(df2['Contract Number (IDVPIID)'])
+
+# Three different unit tests ensures that there are no null or N/A values in Contract Number, Award Number, and Vendor Name
+UnitTest1 = df['Contract Number (IDVPIID)'].isna().sum()\
+and df['Contract Number (IDVPIID)'].isnull().sum()
+
+UnitTest2 = df['Award Number (PIID)'].isna().sum()\
+and df['Award Number (PIID)'].isnull().sum()
+
+UnitTest3 = df['Vendor  Top Name'].isna().sum()\
+and df['Vendor  Top Name'].isnull().sum()
+
+# If all Unit Tests equal zero null/N/A values, then the document is printed as clean 
+if (UnitTest1 == 0) and (UnitTest2 == 0) and (UnitTest3 == 0):
+    df1.to_csv('ground_vehicles_clean.csv', index = False)
